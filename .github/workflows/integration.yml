@@ -1,0 +1,65 @@
+name: Python Broadcast Image Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # Install MySQL client
+      - name: Install MySQL client
+        run: sudo apt-get install -y mysql-client
+
+      # Create and activate virtual environment
+      - name: Set up virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      # Configure MySQL connection (if using an external MySQL server)
+      - name: Set up database configuration
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: 
+          DB_NAME: broadcast
+        run: |
+          echo "Using external MySQL database at $DB_HOST:$DB_PORT"
+          source venv/bin/activate
+          python setup_database.py  
+
+      # Run Python broadcast script
+      - name: Run broadcast script
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: 
+          DB_NAME: broadcast
+        run: |
+          source venv/bin/activate
+          python main.py 
+

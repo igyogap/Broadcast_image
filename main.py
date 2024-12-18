@@ -5,7 +5,7 @@ import os
 from telegram import Bot
 from telegram.error import RetryAfter, TimedOut, NetworkError, TelegramError
 from telegram.request import HTTPXRequest
-from dbinterface import DBInterface
+from setup_database import DBInterface
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,11 +35,11 @@ db = DBInterface()
 
 async def fetch_user_ids(status):
     await db.init_pool()
-    sql = "SELECT id, chatid FROM `user_kaleidoskop_new` WHERE status_bc = %s"
+    sql = "SELECT id, chatid FROM `users` WHERE status_bc = %s"
     return await db.queries(sql, (status,))
 
 async def update_status(status, user_id):
-    sql = "UPDATE `user_kaleidoskop_new` SET status_bc = %s WHERE id = %s"
+    sql = "UPDATE `users` SET status_bc = %s WHERE id = %s"
     await db.commands(sql, (status, user_id))
 
 async def send_image(bot, chat_id, file_id):

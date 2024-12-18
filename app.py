@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 import asyncio
-from dbinterface import DBInterface
+from setup_database import DBInterface
 
 app = FastAPI()
 
@@ -13,7 +13,7 @@ db = DBInterface()
 async def get_data():
     try:
         await db.init_pool()
-        sql = "SELECT id, status_bc FROM user_kaleidoskop_new"
+        sql = "SELECT id, status_bc FROM users"
         query = await db.queries(sql)
         return query
     except Exception as e:
