@@ -74,11 +74,12 @@ jobs:
       # Run Python broadcast script
       - name: Run broadcast script
         env:
-          DB_HOST: localhost
+          DB_HOST: ${{ env.DB_HOST }}
           DB_PORT: ${{ env.DB_PORT }}
           DB_USER: ${{ env.DB_USER }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
           DB_NAME: ${{ env.DB_NAME }}
+          TOKEN: "8149797212:AAGEcHrZYWgKVv2RcRnSrGQNCSmR-hHTnLQ"
         run: |
           source venv/bin/activate
           python main.py
