@@ -68,7 +68,7 @@ jobs:
         run: |
           source venv/bin/activate
           pip install cryptography
-          
+
       # Install dependencies
       - name: Install dependencies
         run: |
@@ -83,7 +83,6 @@ jobs:
           DB_USER: ${{ env.DB_USER }}
           DB_PASSWORD: ${{ env.DB_PASSWORD }}
           DB_NAME: ${{ env.DB_NAME }}
-          # TOKEN: "8149797212:AAGEcHrZYWgKVv2RcRnSrGQNCSmR-hHTnLQ"
         run: |
           echo env
           source venv/bin/activate
