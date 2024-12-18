@@ -30,7 +30,8 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y mysql-server
             sudo systemctl start mysql
-            sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root_password';"
+            sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root_password';"
+            sudo mysql -e "FLUSH PRIVILEGES;"
 
       - name: Check MySQL Service
         run: sudo systemctl status mysql
