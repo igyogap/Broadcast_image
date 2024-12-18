@@ -1,18 +1,18 @@
 import aiomysql
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
 class DBInterface:
     def __init__(self):
         """Initialize database configuration from environment variables."""
-        load_dotenv()  # Load environment variables from .env file
+        # load_dotenv()  # Load environment variables from .env file
         
-        self.HOST = os.getenv('HOST_DB')
-        self.USER = os.getenv('USER_DB')
-        self.PASS = os.getenv('PASS_DB')
-        self.DBASE = os.getenv('DBASE')
+        self.HOST = os.getenv('DB_HOST')
+        self.USER = os.getenv('DB_USER')
+        self.PASS = os.getenv('DB_PASSWORD')
+        self.DBASE = os.getenv('DB_NAME')
             
-        self.PORT = int(os.getenv('PORT_DB', 3306))  # Default to 3306 if not provided
+        self.PORT = int(os.getenv('DB_PORT', 3306))  # Default to 3306 if not provided
         self.pool = None
 
     async def init_pool(self):
