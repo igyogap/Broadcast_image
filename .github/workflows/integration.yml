@@ -40,18 +40,16 @@ jobs:
       - name: Check MySQL Service
         run: sudo systemctl status mysql
 
-      # Set up database and user
-      - name: Set up database and user
+      - name: Run MySQL Docker container
         run: |
-          sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
-          sudo mysql -u root -p"root_password" -e "CREATE DATABASE IF NOT EXISTS broadcast;"
-          sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
-
-      # Add test data to database
+            docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root_password -d mysql:8.0
+            sleep 30  # Give time for MySQL to start
+        # Add test data to MySQL database
       - name: Add test data to database
         run: |
-          sudo mysql -u root -p"root_password" -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
-          sudo mysql -u root -p"root_password" -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
+            docker exec -i mysql-container mysql -u root -proot_password -e "CREATE DATABASE IF NOT EXISTS broadcast;"
+            docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
+            docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
 
       # Set up virtual environment
       - name: Set up virtual environment
