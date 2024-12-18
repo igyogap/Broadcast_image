@@ -25,15 +25,15 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
 
-      # Install MySQL server and configure root user
+      # Install and start MySQL server
       - name: Install and start MySQL service
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql
-          # Configure the root user to allow password-based authentication
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root_password';"
-          # Ensure privileges are loaded
+          # Log in to MySQL with no password and disable auth_socket for root
+          sudo mysql -e "UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root';"
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root_password';"
           sudo mysql -e "FLUSH PRIVILEGES;"
 
       # Check MySQL Service status
