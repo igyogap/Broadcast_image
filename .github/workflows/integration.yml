@@ -34,16 +34,6 @@ jobs:
       - name: Check MySQL Service
         run: sudo systemctl status mysql
 
-      - name: Secure MySQL installation
-        run: |
-          sudo mysql_secure_installation <<EOF
-          y
-          y
-          y
-          y
-          y
-          EOF
-
       - name: Set up database and user
         run: |
           sudo mysql -u root -e "CREATE DATABASE broadcast;"
