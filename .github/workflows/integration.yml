@@ -25,36 +25,42 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
 
-      - name: Start MySQL Service
+      # Install MySQL server and configure root user
+      - name: Install and start MySQL service
         run: |
-            sudo apt-get update
-            sudo apt-get install -y mysql-server
-            sudo systemctl start mysql
-            sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root_password';"
-            # Ensure privileges are loaded
-            sudo mysql -e "FLUSH PRIVILEGES;"
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql
+          # Configure the root user to allow password-based authentication
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root_password';"
+          # Ensure privileges are loaded
+          sudo mysql -e "FLUSH PRIVILEGES;"
 
+      # Check MySQL Service status
       - name: Check MySQL Service
         run: sudo systemctl status mysql
 
+      # Set up database and user
       - name: Set up database and user
         run: |
-
           sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
-          sudo mysql -u root -p"root_password" -e "CREATE DATABASE broadcast;"
+          sudo mysql -u root -p"root_password" -e "CREATE DATABASE IF NOT EXISTS broadcast;"
           sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
 
+      # Add test data to database
       - name: Add test data to database
-        run:
+        run: |
           sudo mysql -u root -p"root_password" -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
           sudo mysql -u root -p"root_password" -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
-      
+
+      # Set up virtual environment
       - name: Set up virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
 
+      # Install dependencies
       - name: Install dependencies
         run: |
           source venv/bin/activate
@@ -66,9 +72,8 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_USER: root
-          DB_PASSWORD: 
+          DB_PASSWORD: 'root_password'
           DB_NAME: broadcast
         run: |
           source venv/bin/activate
-          python main.py 
-
+          python main.py
