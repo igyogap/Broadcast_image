@@ -1,11 +1,11 @@
 import aiomysql
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
 class DBInterface:
     def __init__(self):
         """Initialize database configuration from environment variables."""
-        # load_dotenv()  # Load environment variables from .env file
+        load_dotenv()  # Load environment variables from .env file
         
         self.HOST = os.getenv('DB_HOST')
         self.USER = os.getenv('DB_USER')
