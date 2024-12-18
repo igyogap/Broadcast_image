@@ -6,6 +6,8 @@ class DBInterface:
     def __init__(self):
         """Initialize database configuration from environment variables."""
         load_dotenv()  # Load environment variables from .env file
+        print(os.getenv('HOST_DB'))
+        print("os.getenv('HOST_DB')")
         self.HOST = os.getenv('HOST_DB')
         self.USER = os.getenv('USER_DB')
         self.PASS = os.getenv('PASS_DB')

@@ -81,5 +81,6 @@ jobs:
           DB_NAME: ${{ env.DB_NAME }}
           TOKEN: "8149797212:AAGEcHrZYWgKVv2RcRnSrGQNCSmR-hHTnLQ"
         run: |
+          echo env
           source venv/bin/activate
           python main.py
