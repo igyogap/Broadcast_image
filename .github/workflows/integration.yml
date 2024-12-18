@@ -64,7 +64,11 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-
+      - name: Install cryptography
+        run: |
+          source venv/bin/activate
+          pip install cryptography
+          
       # Install dependencies
       - name: Install dependencies
         run: |
