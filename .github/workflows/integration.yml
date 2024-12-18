@@ -27,17 +27,36 @@ jobs:
 
       # Run MySQL Docker container
       - name: Run MySQL Docker container
+        id: mysql
         run: |
-            docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root_password -d mysql:8.0
-            # Wait for MySQL to start
-            sleep 30
+          docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root_password -e MYSQL_DATABASE=broadcast -d mysql:8.0
+          # Wait for MySQL to start
+          sleep 30
+
+      # Get MySQL credentials dynamically from the container
+      - name: Get MySQL credentials
+        id: get_mysql_creds
+        run: |
+          # Extract the environment variables from the running container
+          DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql-container)
+          DB_PORT=3306
+          DB_USER=root
+          DB_PASSWORD=root_password
+          DB_NAME=broadcast
+
+          # Output the environment variables as GitHub Actions outputs
+          echo "DB_HOST=$DB_HOST" >> $GITHUB_ENV
+          echo "DB_PORT=$DB_PORT" >> $GITHUB_ENV
+          echo "DB_USER=$DB_USER" >> $GITHUB_ENV
+          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+          echo "DB_NAME=$DB_NAME" >> $GITHUB_ENV
 
       # Add test data to MySQL database
       - name: Add test data to database
         run: |
-            docker exec -i mysql-container mysql -u root -proot_password -e "CREATE DATABASE IF NOT EXISTS broadcast;"
-            docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
-            docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
+          docker exec -i mysql-container mysql -u root -proot_password -e "CREATE DATABASE IF NOT EXISTS broadcast;"
+          docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
+          docker exec -i mysql-container mysql -u root -proot_password -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
 
       # Set up virtual environment
       - name: Set up virtual environment
@@ -55,11 +74,11 @@ jobs:
       # Run Python broadcast script
       - name: Run broadcast script
         env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: 'root_password'
-          DB_NAME: broadcast
+          DB_HOST: ${{ env.DB_HOST }}
+          DB_PORT: ${{ env.DB_PORT }}
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_NAME: ${{ env.DB_NAME }}
         run: |
           source venv/bin/activate
           python main.py
