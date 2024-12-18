@@ -26,7 +26,6 @@ class DBInterface:
                 port=self.PORT,
                 cursorclass=aiomysql.DictCursor,
             )
-            print(self.pool)
             print("Connection pool initialized.")
 
     async def close_pool(self):
