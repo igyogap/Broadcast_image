@@ -30,6 +30,7 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y mysql-server
             sudo systemctl start mysql
+            sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root_password';"
 
       - name: Check MySQL Service
         run: sudo systemctl status mysql
@@ -37,14 +38,14 @@ jobs:
       - name: Set up database and user
         run: |
 
-          sudo mysql -u root -e "SHOW DATABASES;"
-          sudo mysql -u root -e "CREATE DATABASE broadcast;"
-          sudo mysql -u root -e "SHOW DATABASES;"
+          sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
+          sudo mysql -u root -p"root_password" -e "CREATE DATABASE broadcast;"
+          sudo mysql -u root -p"root_password" -e "SHOW DATABASES;"
 
       - name: Add test data to database
         run:
-          sudo mysql -u root -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
-          sudo mysql -u root -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
+          sudo mysql -u root -p"root_password" -e "USE broadcast; CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, chatid BIGINT, status_bc TINYINT DEFAULT 0 NOT NULL);"
+          sudo mysql -u root -p"root_password" -e "USE broadcast; INSERT INTO users (chatid) VALUES (5228446974), (5228446974);"
       
       - name: Set up virtual environment
         run: |
