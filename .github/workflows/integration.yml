@@ -25,26 +25,14 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
 
-      # Install and start MySQL server
-      - name: Install and start MySQL service
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server
-          sudo systemctl start mysql
-          # Log in to MySQL with no password and disable auth_socket for root
-          sudo mysql -e "UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root';"
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root_password';"
-          sudo mysql -e "FLUSH PRIVILEGES;"
-
-      # Check MySQL Service status
-      - name: Check MySQL Service
-        run: sudo systemctl status mysql
-
+      # Run MySQL Docker container
       - name: Run MySQL Docker container
         run: |
             docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root_password -d mysql:8.0
-            sleep 30  # Give time for MySQL to start
-        # Add test data to MySQL database
+            # Wait for MySQL to start
+            sleep 30
+
+      # Add test data to MySQL database
       - name: Add test data to database
         run: |
             docker exec -i mysql-container mysql -u root -proot_password -e "CREATE DATABASE IF NOT EXISTS broadcast;"
