@@ -25,6 +25,15 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
 
+      - name: Start MySQL Service
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y mysql-server
+            sudo systemctl start mysql
+            
+      - name: Check MySQL Service
+        run: sudo systemctl status mysql
+
       # Create and activate virtual environment
       - name: Set up virtual environment
         run: |
